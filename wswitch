@@ -1,0 +1,39 @@
+import sys,os.path
+from subprocess import call
+from optparse import OptionParser
+
+ENV_FILE = ".env"
+PREFIX = "wscript-"
+TARGET = "wscript"
+
+parser = OptionParser()
+parser.add_option("-e", "--env", dest="env")
+(options, args) = parser.parse_args()
+
+current_env = "None"
+if os.path.exists(ENV_FILE):
+	with open(ENV_FILE) as f:
+		for l in f.readlines():
+			current_env = l.rstrip()
+
+if not options.env:
+	print "current env : " + current_env
+	exit(1)
+	
+source_name = PREFIX + options.env
+
+if not os.path.exists(source_name):
+	print "ERROR: no such env : " + options.env
+	exit(1)
+
+retcode = call(["cp", source_name, TARGET])
+if retcode != 0:
+	"ERROR : cannot switch env"
+
+with open(ENV_FILE, "w") as f:
+	f.write(options.env)
+if current_env == options.env:
+	print "sync new version of env : " + current_env
+else:
+	print "env has changed: " + current_env + " -> " + options.env
+	

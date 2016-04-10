@@ -1,0 +1,20 @@
+#!/usr/bin/python
+from subprocess import call
+import sys
+
+if len(sys.argv) == 1:
+	print "ERROR!! env is missing"
+	exit(1)
+
+env = sys.argv[1]
+
+retcode = call(["python", "wswitch", "-e", env])
+if retcode != 0:
+	exit(1)
+retcode = call(["./waf", "configure", "build"])
+if retcode == 0:
+	print "now creating backup..."
+	call(["mkdir", "-p", ".backup"])
+	call(["rm", "-rf", ".backup/build-" + env])
+	call(["cp", "-rf", "build", ".backup/build-" + env])
+	print "backup is successfully created"

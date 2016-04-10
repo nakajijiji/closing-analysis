@@ -1,0 +1,4 @@
+.lock*
+.waf*
+.env
+build/
