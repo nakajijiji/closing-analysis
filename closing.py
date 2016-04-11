@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
-import sys,urllib2,json
+import sys,urllib2,json,codecs
 
 BASE = "http://profile.yahoo.co.jp/"
 INDEPENDENT = BASE + "independent/"
@@ -44,6 +44,10 @@ def post_process(items, code):
 
 code = sys.argv[1]
 
+output = ""
+if len(sys.argv) > 2:
+	output = sys.argv[2]
+
 url = CONSOLIDATE + code
 results = filter(parse(url))
 
@@ -53,5 +57,10 @@ if len(results) == 0:
 
 post_process(results, code)
 
-for r in results:
-	print json.dumps(r, ensure_ascii=False)
+if output == "":
+	for r in results:
+		print json.dumps(r, ensure_ascii=False) 
+else:
+	with codecs.open(output, "w", "utf-8") as f:
+		for r in results:
+			f.write(json.dumps(r, ensure_ascii=False) + '\n')
