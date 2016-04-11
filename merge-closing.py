@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import subprocess,sys,codecs,json,io
 
 script = sys.argv[1]

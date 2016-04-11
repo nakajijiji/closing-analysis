@@ -10,6 +10,30 @@ KEY_MAP = {u"　" : "term"}
 def manipulate(index):
 	return index % 4 
 
+def normalize_key(text):
+	if text.find(u"（") != -1:
+		return text[:text.find(u"（")]
+	return text
+
+def normalize_value(text):
+	if text.endswith(u'百万円'):
+		text = text.replace(',', '')
+		try:
+			text = int(text.replace(u'百万円', '000000'))
+		except:
+			return None
+	elif text.endswith(u'円'):
+		try:
+			text = float(text.replace(u'円', ''))
+		except:
+			return None
+	elif text.endswith('%'):
+		try:
+			text = round(float(text.replace('%', '')) * 0.01, 4)
+		except:
+			return None
+	return text
+
 def parse(url):
 	html = urllib2.urlopen(url)
 	soup = BeautifulSoup(html, "html.parser")
@@ -23,11 +47,11 @@ def parse(url):
 		  # manipulation for broken html in yahoo website
 			index = manipulate(index)	
 			if index == 0:
-				key = td.get_text()
+				key = normalize_key(td.get_text())
 				if key in KEY_MAP:
 					key = KEY_MAP[key]
 				continue
-			results[index - 1][key] = td.get_text()
+			results[index - 1][key] = normalize_value(td.get_text())
 	return results
 
 def filter(items):
