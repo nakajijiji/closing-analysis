@@ -1,4 +1,5 @@
 .lock*
 .waf*
 .env
+.backup
 build/
