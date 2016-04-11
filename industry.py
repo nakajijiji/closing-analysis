@@ -48,11 +48,7 @@ while(True):
 	results.extend(items)
 	index = index + 1
 
-if output == "":
-	for r in results:
-		print json.dumps(r, ensure_ascii=False)
-else:	
-	with codecs.open(output, "w", "utf-8") as f:
-		for r in results:
-			f.write(json.dumps(r, ensure_ascii=False) + '\n')
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+for r in results:
+	print json.dumps(r, ensure_ascii=False)
 

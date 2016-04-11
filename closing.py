@@ -44,10 +44,6 @@ def post_process(items, code):
 
 code = sys.argv[1]
 
-output = ""
-if len(sys.argv) > 2:
-	output = sys.argv[2]
-
 url = CONSOLIDATE + code
 results = filter(parse(url))
 
@@ -57,10 +53,6 @@ if len(results) == 0:
 
 post_process(results, code)
 
-if output == "":
-	for r in results:
-		print json.dumps(r, ensure_ascii=False) 
-else:
-	with codecs.open(output, "w", "utf-8") as f:
-		for r in results:
-			f.write(json.dumps(r, ensure_ascii=False) + '\n')
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+for r in results:
+	print(json.dumps(r, ensure_ascii=False))
