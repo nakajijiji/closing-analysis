@@ -6,6 +6,9 @@ ENV_FILE = ".env"
 PREFIX = "wscript-"
 TARGET = "wscript"
 
+def source_file(env):
+	return PREFIX + env.replace('.', '/')
+
 parser = OptionParser()
 parser.add_option("-e", "--env", dest="env")
 (options, args) = parser.parse_args()
@@ -20,9 +23,9 @@ if not options.env:
 	print "current env : " + current_env
 	exit(1)
 	
-source_name = PREFIX + options.env
+source_name = source_file(options.env)
 
-if not os.path.exists(source_name):
+if not os.path.exists(source_name) or os.path.isdir(source_name):
 	print "ERROR: no such env : " + options.env
 	exit(1)
 
