@@ -2,9 +2,12 @@
 import sys,urllib2,json,codecs
 from bs4 import BeautifulSoup
 
-BASE = "http://profile.yahoo.co.jp/industry/"
-COLUMN_MAP = { 0 : "code", 1 : u"名称", 2 : u"詳細"}
+BASE = "http://minkabu.jp/stock/nomurasitemap/"
+COLUMN_MAP = { 0 : "code", 1 : u"名称"}
 
+def manipulate(item):
+# consistency with yahoo page
+	item[u"詳細"] = None
 
 def fetch(url):
 	html = ""
@@ -14,7 +17,10 @@ def fetch(url):
 	except urllib2.URLError, e:
 	  return results
 	soup = BeautifulSoup(html, "html.parser")
-	trs = soup.select("table")[2].select("tr")
+	if len(soup.select("#contents table")) < 2:
+		return results
+
+	trs = soup.select("#contents table")[1].select("tr")
 	first = True
 	for tr in trs:
 		if first:
@@ -22,28 +28,24 @@ def fetch(url):
 			continue
 		result = {}
 		for index, td in enumerate(tr.select("td")):
-			if index == 3:
+			if index == 2:
 			  break
 			key = COLUMN_MAP[index]
 			result[key] = td.get_text()
+		manipulate(result)
 		results.append(result)
 	return results
 
 def url(industry, index):
-	return BASE + industry + "/" + industry + str(index) + ".html"
+	return BASE + id + "?page=" + str(index)
 
-industry = sys.argv[1]
-
-output = ""
-
-if len(sys.argv) > 2:
-	output = sys.argv[2]
+id = sys.argv[1]
 
 index = 1
 
 results = []
 while(True):
-	items = fetch(url(industry, index))
+	items = fetch(url(id, index))
 	if len(items) == 0:
 		break
 	results.extend(items)

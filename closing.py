@@ -5,7 +5,8 @@ import sys,urllib2,json,codecs
 BASE = "http://profile.yahoo.co.jp/"
 INDEPENDENT = BASE + "independent/"
 CONSOLIDATE = BASE + "consolidate/"
-KEY_MAP = {u"　" : "term"}
+KEY_MAP = {u"　" : u"期"}
+IGNORE_KEYS = [u"配当区分", u"発行済み株式総数", u"1株配当"]
 
 def manipulate(index):
 	return index % 4 
@@ -48,7 +49,9 @@ def parse(url):
 			index = manipulate(index)	
 			if index == 0:
 				key = normalize_key(td.get_text())
-				if key in KEY_MAP:
+				if key in IGNORE_KEYS:
+					break
+				elif key in KEY_MAP:
 					key = KEY_MAP[key]
 				continue
 			results[index - 1][key] = normalize_value(td.get_text())
@@ -79,4 +82,4 @@ post_process(results, code)
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 for r in results:
-	print(json.dumps(r, ensure_ascii=False))
+	print(json.dumps(r, sort_keys=True, ensure_ascii=False))
