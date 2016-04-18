@@ -39,6 +39,8 @@ def parse(url):
 	html = urllib2.urlopen(url)
 	soup = BeautifulSoup(html, "html.parser")
 	results = [{}, {}, {}]
+	if len(soup.select("table.yjMt")) < 1:
+		return results
 	trs = soup.select("table.yjMt")[0].select("tr")
 	first = True
 	for tr in trs:
@@ -60,7 +62,7 @@ def parse(url):
 def filter(items):
 	results = []
 	for item in items:
-		if item[u"決算期"] == '---':
+		if not u"計算機" in item or item[u"決算期"] == '---':
 			continue
 		results.append(item)
 	return results

@@ -2,7 +2,7 @@
 # This is an example script
 APPNAME = 'example-project'
 VERSION = '0.0.1'
-INDUSTRY = "50103"
+INDUSTRY = "50101"
 
 srcdir = '.'
 blddir = 'build'
